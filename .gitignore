@@ -1,0 +1,5 @@
+# rom stuff
+*.gba
+
+# python stuff
+__pycache__/
