@@ -1,6 +1,6 @@
 from GbafeLib.Gba_Rom import *
+import GbafeLib.Gbagfx as Gbagfx
 
-import subprocess
 import os
 import numpy as np
 from PIL import Image
@@ -75,13 +75,7 @@ def get_portrait(rom, address, alpha=True):
 		file.write(data)
 	with open(palfile,  'wb') as file:
 		file.write(pal )
-	args = [
-		'./Tools/gbagfx/gbagfx',
-		datafile, imagefile,
-		'-width', '132',
-		'-palette', palfile
-	]
-	subprocess.call(args)
+	Gbagfx.run(datafile, imagefile, palette=palfile, width=132)
 	portrait = arrange_portrait(imagefile, alpha)
 	os.remove(datafile )
 	os.remove(palfile  )
