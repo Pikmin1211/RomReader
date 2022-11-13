@@ -4,7 +4,6 @@ import GbafeLib.Gbagfx as Gbagfx
 import os
 import numpy as np
 from PIL import Image
-from pathlib import Path
 import tempfile
 
 portrait_table_pointer = 0x5524
@@ -89,5 +88,4 @@ def get_portrait_from_id(rom, portraitid):
 	return get_portrait(rom, portrait_entry_address)
 
 def export_portrait(rom, portraitid, name):
-	if portraitid != 0:
-		get_portrait_from_id(rom, portraitid).save(name)
+	get_portrait_from_id(rom, portraitid).save(name)

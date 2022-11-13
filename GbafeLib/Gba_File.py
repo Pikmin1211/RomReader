@@ -2,6 +2,7 @@ from GbafeLib.Gba_Rom   import *
 from GbafeLib.Text      import *
 from GbafeLib.Portrait  import *
 from GbafeLib.Character import *
+from GbafeLib.Item      import *
 
 class gba_file:
 	def __init__(this, filename, name=''):
@@ -12,6 +13,11 @@ class gba_file:
 		return decode_text(this.gba_rom, textid)
 
 	def export_character_portrait(this, characterid, out_dir=''):
-		if this.name != '':
+		if this.name != '' and out_dir == '':
 			out_dir = this.name
 		export_portrait_from_character_id(this.gba_rom, characterid, out_dir)
+
+	def export_item_icon(this, itemid, out_dir=''):
+		if this.name != '' and out_dir == '':
+			out_dir = this.name
+		export_item_icon_from_item_id(this.gba_rom, itemid, out_dir)
