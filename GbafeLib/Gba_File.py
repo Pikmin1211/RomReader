@@ -2,6 +2,7 @@ from GbafeLib.Gba_Rom   import *
 from GbafeLib.Text      import *
 from GbafeLib.Portrait  import *
 from GbafeLib.Character import *
+from GbafeLib.Class     import *
 from GbafeLib.Item      import *
 
 class gba_file:
@@ -21,3 +22,8 @@ class gba_file:
 		if this.name != '' and out_dir == '':
 			out_dir = this.name
 		export_item_icon_from_item_id(this.gba_rom, itemid, out_dir)
+
+	def export_class_map_sprite(this, classid, out_dir=''):
+		if this.name != '' and out_dir == '':
+			out_dir = this.name
+		export_map_sprite_from_class_id(this.gba_rom, classid, out_dir)

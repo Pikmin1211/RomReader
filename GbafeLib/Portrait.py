@@ -1,10 +1,10 @@
 from GbafeLib.Gba_Rom import *
+from GbafeLib.Image   import *
+
 import GbafeLib.Gbagfx as Gbagfx
 
-import os
 import numpy as np
 from PIL import Image
-import tempfile
 
 portrait_table_pointer = 0x5524
 portrait_table_entry_length = 28
@@ -41,45 +41,20 @@ def arrange_portrait_tiles(array):
 	newarray[ 72:  80,  80:  96] = array[  0:   8, 944: 960]
 	return newarray
 
-def set_portrait_alpha(portrait):
-	portrait = portrait.convert('RGBA')
-	array = np.array(portrait)
-	alpha_color = array[0][0].copy()
-	alpha_color[3] = 0
-	for yindex, column in enumerate(array):
-		for xindex, cell in enumerate(column):
-			if np.array_equal(cell[:3], alpha_color[:3]):
-				array[yindex][xindex] = alpha_color
-	return Image.fromarray(array)
-
-def arrange_portrait(imagefile, alpha=True):
-	with Image.open(imagefile) as image:
-		array = np.array(image)
-		array = arrange_portrait_tiles(array)
-		portrait = Image.fromarray(array)
-		portrait.putpalette(image.getpalette())
-		if alpha:
-			portrait = set_portrait_alpha(portrait)
-		return portrait
+def arrange_portrait(image, alpha=True):
+	array = np.array(image)
+	array = arrange_portrait_tiles(array)
+	portrait = Image.fromarray(array)
+	portrait.putpalette(image.getpalette())
+	if alpha:
+		portrait = set_image_alpha(portrait)
+	return portrait
 
 def get_portrait(rom, address, alpha=True):
 	this_portrait = portrait_table_entry(rom.read_bytes(address, portrait_table_entry_length))
 	data = rom.read_bytes(this_portrait.portrait_address + 4, portrait_size)
 	pal =  rom.read_bytes(this_portrait.palette_address  + 0, palette_size )
-	tempdir = tempfile.mkdtemp()
-	datafile  = tempdir + '/Portrait.4bpp'
-	palfile   = tempdir + '/Portrait.pal'
-	imagefile = tempdir + '/Portrait.png'
-	with open(datafile, 'wb') as file:
-		file.write(data)
-	with open(palfile,  'wb') as file:
-		file.write(pal )
-	Gbagfx.run(datafile, imagefile, palette=palfile, width=132)
-	portrait = arrange_portrait(imagefile, alpha)
-	os.remove(datafile )
-	os.remove(palfile  )
-	os.remove(imagefile)
-	os.rmdir(tempdir)
+	portrait = arrange_portrait(get_image_from_bytes(data, pal, 132, False), alpha)
 	return portrait
 
 def get_portrait_from_id(rom, portraitid):
