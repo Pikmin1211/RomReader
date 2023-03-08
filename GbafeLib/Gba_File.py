@@ -27,3 +27,6 @@ class gba_file:
 		if this.name != '' and out_dir == '':
 			out_dir = this.name
 		export_map_sprite_from_class_id(this.gba_rom, classid, out_dir)
+
+	def print_character(this, characterid):
+		print(make_character_from_id(this.gba_rom, characterid))
