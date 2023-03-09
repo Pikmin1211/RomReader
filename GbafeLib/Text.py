@@ -9,6 +9,9 @@ class huffman_node:
 		self.left  = int.from_bytes(data[0x00:0x02], byteorder='little')
 		self.right = int.from_bytes(data[0x02:0x04], byteorder='little')
 
+def is_valid_ascii(byte):
+	return 0x1F < byte < 0x80
+
 def ascii_decode(rom, address):
 	data = bytearray()
 	while True:
@@ -16,7 +19,8 @@ def ascii_decode(rom, address):
 		address += 1
 		if next_byte == 0:
 			break
-		data.append(next_byte)
+		if is_valid_ascii(next_byte):
+			data.append(next_byte)
 	return data.decode('ascii')
 
 # Credit Hextator, Zahlman
@@ -31,8 +35,13 @@ def huffman_decode(rom, address):
 			if node.left == 0:
 				break
 			node_value = node.left.to_bytes(2, byteorder='little')
-			if node_value[1] == 0x1F: # garbage character
-				node_value = node_value[0].to_bytes(1, byteorder='little')
+			hi_node_value = node_value[1]
+			lo_node_value = node_value[0]
+			if not is_valid_ascii(lo_node_value):
+				lo_node_value = 0
+			if not is_valid_ascii(hi_node_value):
+				hi_node_value = 0
+			node_value = (lo_node_value + (hi_node_value << 8)).to_bytes(2, byteorder='little')
 			decoded += node_value.decode('ascii')
 			node = huffman_node(rom.read_bytes(huffman_tree_root_address, 4))
 		else:

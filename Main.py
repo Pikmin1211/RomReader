@@ -1,6 +1,6 @@
 from GbafeLib.Gba_File import *
 
-rom = gba_file('Bells_Of_Byelen_v1_3.gba', name='BellsOfByelen')
+rom = gba_file('Vision Quest v3.gba', name='VisionQuest')
 
 '''
 for i in range(1, 256):
